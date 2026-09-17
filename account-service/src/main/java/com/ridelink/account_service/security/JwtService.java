@@ -42,4 +42,48 @@ public class JwtService {
                 .compact();
     }
 
+    public String extractUsername(String token) {
+        return getClaims(token).getSubject();
+    }
+
+     public Long extractAccountId(String token) {
+
+        Object accountId =
+                getClaims(token).get("accountId");
+
+        return Long.valueOf(accountId.toString());
+    }
+
+    public String extractRole(String token) {
+
+        return getClaims(token)
+                .get("role", String.class);
+    }
+
+    public boolean isTokenValid(
+            String token,
+            User user) {
+
+        String username = extractUsername(token);
+
+        return username.equals(user.getEmail())
+                && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+
+        return getClaims(token)
+                .getExpiration()
+                .before(new Date());
+    }
+
+     private Claims getClaims(String token) {
+
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
 }
