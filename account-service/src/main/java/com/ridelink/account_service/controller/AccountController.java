@@ -7,6 +7,7 @@ import com.ridelink.account_service.dto.UpdateProfileRequest;
 import com.ridelink.account_service.dto.UpdateStatusRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
     name = "Accounts",
     description = "Account profile and status management"
 )
-
+@SecurityRequirement(name = "bearerAuth")
 public class AccountController {
 
     private final AccountService accountService;

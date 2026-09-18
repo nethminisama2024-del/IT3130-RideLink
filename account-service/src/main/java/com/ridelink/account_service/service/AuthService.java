@@ -53,6 +53,7 @@ public class AuthService {
         }
 
         User user = User.builder()
+                .fullName(request.getName())
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(
