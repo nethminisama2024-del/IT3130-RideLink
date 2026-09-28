@@ -1,6 +1,5 @@
 package com.ridelink.account_service.controller;
 
-import com.ridelink.account_service.dto.*;
 import com.ridelink.account_service.service.AccountService;
 import com.ridelink.account_service.dto.AccountResponse;
 import com.ridelink.account_service.dto.UpdateProfileRequest;
@@ -12,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

@@ -1,6 +1,5 @@
 package com.ridelink.account_service.controller;
 
-import com.ridelink.account_service.dto.*;
 import com.ridelink.account_service.service.AuthService;
 import com.ridelink.account_service.dto.AccountResponse;
 import com.ridelink.account_service.dto.LoginRequest;

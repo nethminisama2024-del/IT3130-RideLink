@@ -1,8 +1,6 @@
 package com.ridelink.account_service.service;
 
-import com.ridelink.account_service.dto.*;
 import com.ridelink.account_service.entity.User;
-import com.ridelink.account_service.enums.AccountStatus;
 import com.ridelink.account_service.exception.ResourceNotFoundException;
 import com.ridelink.account_service.repository.UserRepository;
 import com.ridelink.account_service.dto.AccountResponse;

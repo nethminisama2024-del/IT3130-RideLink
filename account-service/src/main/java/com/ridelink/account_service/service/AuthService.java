@@ -1,9 +1,7 @@
 package com.ridelink.account_service.service;
 
-import com.ridelink.account_service.dto.*;
 import com.ridelink.account_service.entity.User;
 import com.ridelink.account_service.enums.*;
-import com.ridelink.account_service.exception.*;
 import com.ridelink.account_service.repository.UserRepository;
 import com.ridelink.account_service.security.JwtService;
 import com.ridelink.account_service.dto.AccountResponse;
