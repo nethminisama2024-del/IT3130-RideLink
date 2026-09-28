@@ -2,6 +2,7 @@ package com.ridelink.driverservice.controller;
 
 import com.ridelink.driverservice.dto.VehicleRequest;
 import com.ridelink.driverservice.entity.Vehicle;
+import com.ridelink.driverservice.security.DriverAccessService;
 import com.ridelink.driverservice.service.VehicleService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,9 +24,11 @@ import org.springframework.web.bind.annotation.*;
 public class VehicleController {
 
     private final VehicleService vehicleService;
+    private final DriverAccessService driverAccessService;
 
-    public VehicleController(VehicleService vehicleService) {
+    public VehicleController(VehicleService vehicleService, DriverAccessService driverAccessService) {
         this.vehicleService = vehicleService;
+        this.driverAccessService = driverAccessService;
     }
 
     @PostMapping
@@ -34,8 +38,10 @@ public class VehicleController {
     )
     public ResponseEntity<Vehicle> addVehicle(
             @PathVariable Long driverId,
-            @Valid @RequestBody VehicleRequest request) {
+            @Valid @RequestBody VehicleRequest request,
+            Authentication authentication) {
 
+        driverAccessService.requireOwnerOrAdmin(driverId, authentication);
         Vehicle vehicle =
                 vehicleService.addVehicle(driverId, request);
 
@@ -50,8 +56,9 @@ public class VehicleController {
             description = "Retrieves the vehicle registered to the specified driver"
     )
     public ResponseEntity<Vehicle> getVehicle(
-            @PathVariable Long driverId) {
+            @PathVariable Long driverId, Authentication authentication) {
 
+        driverAccessService.requireOwnerOrAdmin(driverId, authentication);
         return ResponseEntity.ok(
                 vehicleService.getVehicleByDriver(driverId)
         );
@@ -64,8 +71,10 @@ public class VehicleController {
     )
     public ResponseEntity<Vehicle> updateVehicle(
             @PathVariable Long driverId,
-            @Valid @RequestBody VehicleRequest request) {
+            @Valid @RequestBody VehicleRequest request,
+            Authentication authentication) {
 
+        driverAccessService.requireOwnerOrAdmin(driverId, authentication);
         return ResponseEntity.ok(
                 vehicleService.updateVehicle(driverId, request)
         );

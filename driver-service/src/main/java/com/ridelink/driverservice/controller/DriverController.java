@@ -5,6 +5,7 @@ import com.ridelink.driverservice.dto.DriverRequest;
 import com.ridelink.driverservice.dto.DriverUpdateRequest;
 import com.ridelink.driverservice.dto.LocationRequest;
 import com.ridelink.driverservice.entity.Driver;
+import com.ridelink.driverservice.security.DriverAccessService;
 import com.ridelink.driverservice.service.DriverService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,9 +29,11 @@ import java.util.List;
 public class DriverController {
 
     private final DriverService driverService;
+    private final DriverAccessService driverAccessService;
 
-    public DriverController(DriverService driverService) {
+    public DriverController(DriverService driverService, DriverAccessService driverAccessService) {
         this.driverService = driverService;
+        this.driverAccessService = driverAccessService;
     }
 
     @PostMapping
@@ -38,8 +42,10 @@ public class DriverController {
             description = "Creates a new operational driver profile"
     )
     public ResponseEntity<Driver> createDriver(
-            @Valid @RequestBody DriverRequest request) {
+            @Valid @RequestBody DriverRequest request,
+            Authentication authentication) {
 
+        driverAccessService.requireCreateProfile(request.getAccountId(), authentication);
         Driver driver = driverService.createDriver(request);
 
         return ResponseEntity
@@ -53,10 +59,10 @@ public class DriverController {
             description = "Retrieves a driver by driver ID"
     )
     public ResponseEntity<Driver> getDriver(
-            @PathVariable Long id) {
+            @PathVariable Long id, Authentication authentication) {
 
         return ResponseEntity.ok(
-                driverService.getDriver(id)
+                driverAccessService.requireDriverRead(id, authentication)
         );
     }
 
@@ -81,8 +87,10 @@ public class DriverController {
     )
     public ResponseEntity<Driver> updateAvailability(
             @PathVariable Long id,
-            @Valid @RequestBody AvailabilityRequest request) {
+            @Valid @RequestBody AvailabilityRequest request,
+            Authentication authentication) {
 
+        driverAccessService.requireAvailabilityChange(id, request, authentication);
         return ResponseEntity.ok(
                 driverService.updateAvailability(id, request)
         );
@@ -95,8 +103,10 @@ public class DriverController {
     )
     public ResponseEntity<Driver> updateLocation(
             @PathVariable Long id,
-            @Valid @RequestBody LocationRequest request) {
+            @Valid @RequestBody LocationRequest request,
+            Authentication authentication) {
 
+        driverAccessService.requireOwnerOrAdmin(id, authentication);
         return ResponseEntity.ok(
                 driverService.updateLocation(id, request)
         );
