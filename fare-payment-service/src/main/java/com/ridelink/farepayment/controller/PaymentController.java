@@ -9,7 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import com.ridelink.farepayment.security.PaymentAccessService;
 
 import java.util.List;
 
@@ -19,9 +21,11 @@ import java.util.List;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final PaymentAccessService paymentAccessService;
 
-    public PaymentController(PaymentService paymentService) {
+    public PaymentController(PaymentService paymentService, PaymentAccessService paymentAccessService) {
         this.paymentService = paymentService;
+        this.paymentAccessService = paymentAccessService;
     }
 
     @PostMapping
@@ -34,8 +38,12 @@ public class PaymentController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get payment by ID")
-    public ResponseEntity<PaymentResponse> getPayment(@PathVariable Long id) {
-        return ResponseEntity.ok(paymentService.getPaymentById(id));
+    public ResponseEntity<PaymentResponse> getPayment(@PathVariable Long id, Authentication authentication) {
+        PaymentResponse payment = paymentService.getPaymentById(id);
+        if (!paymentAccessService.canRead(payment.getPassengerId(), authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(payment);
     }
 
     @GetMapping("/ride/{rideId}")
@@ -46,7 +54,11 @@ public class PaymentController {
 
     @GetMapping("/{id}/receipt")
     @Operation(summary = "Get receipt for a payment")
-    public ResponseEntity<ReceiptResponse> getReceipt(@PathVariable Long id) {
-        return ResponseEntity.ok(paymentService.getReceipt(id));
+    public ResponseEntity<ReceiptResponse> getReceipt(@PathVariable Long id, Authentication authentication) {
+        ReceiptResponse receipt = paymentService.getReceipt(id);
+        if (!paymentAccessService.canRead(receipt.getPassengerId(), authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(receipt);
     }
 }

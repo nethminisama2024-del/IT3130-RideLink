@@ -4,6 +4,7 @@ import com.ridelink.farepayment.dto.FareEstimateRequest;
 import com.ridelink.farepayment.dto.FareEstimateResponse;
 import com.ridelink.farepayment.dto.FinalFareRequest;
 import com.ridelink.farepayment.entity.FareRecord;
+import com.ridelink.farepayment.exception.ResourceNotFoundException;
 import com.ridelink.farepayment.repository.FareRecordRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -149,5 +152,25 @@ class FareServiceTest {
 
         // Verify save() was NEVER called
         verify(fareRecordRepository, never()).save(any(FareRecord.class));
+    }
+
+    @Test
+    void getFareByRideIdReturnsExistingRecord() {
+        FareRecord record = new FareRecord();
+        record.setId(1L);
+        record.setRideId(1001L);
+        record.setDistanceKm(5.0);
+        record.setFareAmount(550.0);
+        when(fareRecordRepository.findByRideId(1001L)).thenReturn(List.of(record));
+
+        assertSame(record, fareService.getFareByRideId(1001L));
+    }
+
+    @Test
+    void getFareByRideIdThrowsWhenMissing() {
+        when(fareRecordRepository.findByRideId(1001L)).thenReturn(List.of());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> fareService.getFareByRideId(1001L));
     }
 }
