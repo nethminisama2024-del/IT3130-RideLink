@@ -1,0 +1,73 @@
+name: RideLink CI
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  test-services:
+    name: Test ${{ matrix.service }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - account-service
+          - driver-service
+          - ride-management-service
+          - fare-payment-service
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: ${{ matrix.service }}/pom.xml
+
+      - name: Create CI databases
+        run: |
+          mysql -h 127.0.0.1 -uroot -e "
+            CREATE DATABASE IF NOT EXISTS ridelink_account_db;
+            CREATE DATABASE IF NOT EXISTS ridelink_driver_db;
+            CREATE DATABASE IF NOT EXISTS ridelink_rides;
+            CREATE DATABASE IF NOT EXISTS ridelink_payment_db;
+          "
+
+      - name: Generate temporary CI configuration
+        shell: bash
+        run: |
+          echo "JWT_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "RIDE_SERVICE_KEY=$(openssl rand -hex 24)" >> "$GITHUB_ENV"
+          echo "RIDE_FARE_SERVICE_KEY=$(openssl rand -hex 24)" >> "$GITHUB_ENV"
+          echo "DB_USERNAME=root" >> "$GITHUB_ENV"
+          echo "DB_PASSWORD=" >> "$GITHUB_ENV"
+
+      - name: Build and test ${{ matrix.service }}
+        working-directory: ${{ matrix.service }}
+        run: mvn -B clean verify
