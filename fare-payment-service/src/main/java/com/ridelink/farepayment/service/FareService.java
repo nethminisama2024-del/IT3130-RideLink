@@ -4,6 +4,7 @@ import com.ridelink.farepayment.dto.FareEstimateRequest;
 import com.ridelink.farepayment.dto.FareEstimateResponse;
 import com.ridelink.farepayment.dto.FinalFareRequest;
 import com.ridelink.farepayment.entity.FareRecord;
+import com.ridelink.farepayment.exception.ResourceNotFoundException;
 import com.ridelink.farepayment.repository.FareRecordRepository;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,13 @@ public class FareService {
         record.setDestination(request.getDestination());
 
         return fareRecordRepository.save(record);
+    }
+
+    public FareRecord getFareByRideId(Long rideId) {
+        return fareRecordRepository.findByRideId(rideId).stream()
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Fare not found for ride ID: " + rideId));
     }
 
     private double calculateFare(double distanceKm) {

@@ -29,6 +29,7 @@ public class JwtService {
     public String generateToken(User user) {
 
         return Jwts.builder()
+                .setIssuer("RideLink")
                 .setSubject(user.getEmail())
                 .claim("accountId", user.getId())
                 .claim("role", user.getRole().name())

@@ -35,4 +35,10 @@ public class FareController {
             @Valid @RequestBody FinalFareRequest request) {
         return ResponseEntity.ok(fareService.calculateFinalFare(request));
     }
+
+    @GetMapping("/ride/{rideId}")
+    @Operation(summary = "Get final fare for a ride")
+    public ResponseEntity<FareRecord> getFareByRideId(@PathVariable Long rideId) {
+        return ResponseEntity.ok(fareService.getFareByRideId(rideId));
+    }
 }

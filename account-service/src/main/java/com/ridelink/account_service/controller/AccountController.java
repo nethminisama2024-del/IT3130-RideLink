@@ -1,6 +1,7 @@
 package com.ridelink.account_service.controller;
 
 import com.ridelink.account_service.service.AccountService;
+import com.ridelink.account_service.service.AccountValidationService;
 import com.ridelink.account_service.dto.AccountResponse;
 import com.ridelink.account_service.dto.UpdateProfileRequest;
 import com.ridelink.account_service.dto.UpdateStatusRequest;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private final AccountService accountService;
+    private final AccountValidationService accountValidationService;
 
     @GetMapping("/{id}")
     @Operation(summary = "Get an account profile")
@@ -35,6 +37,15 @@ public class AccountController {
         );
     }
 
+
+    @GetMapping("/{accountId}/passenger-validation")
+    @Operation(summary = "Validate an active passenger account")
+    public ResponseEntity<Void> validatePassenger(@PathVariable Long accountId) {
+
+        return accountValidationService.isActivePassenger(accountId)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
+    }
     @PutMapping("/{id}")
     @Operation(summary = "Update an account profile")
     public ResponseEntity<AccountResponse>
@@ -66,5 +77,5 @@ public class AccountController {
                 )
         );
     }
-    
+
 }

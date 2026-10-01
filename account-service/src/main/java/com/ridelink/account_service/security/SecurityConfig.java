@@ -57,6 +57,9 @@ public class SecurityConfig {
                             "/v3/api-docs/**"
                     ).permitAll()
 
+                    // Internal passenger validation used by Ride Management
+                    .requestMatchers("/api/accounts/*/passenger-validation").permitAll()
+
                     // Admin account status
                     .requestMatchers("/api/accounts/*/status").hasRole("ADMIN")
 
