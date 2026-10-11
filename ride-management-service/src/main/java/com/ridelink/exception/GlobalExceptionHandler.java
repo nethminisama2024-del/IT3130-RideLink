@@ -36,12 +36,12 @@ public class GlobalExceptionHandler {
         Map<String, Object> error = new LinkedHashMap<>();
 
         error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.BAD_REQUEST.value());
-        error.put("error", "Bad Request");
+        error.put("status", HttpStatus.CONFLICT.value());
+        error.put("error", "Conflict");
         error.put("message", exception.getMessage());
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.CONFLICT)
                 .body(error);
     }
 

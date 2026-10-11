@@ -1,8 +1,12 @@
 package com.ridelink.ride.controller;
 
 import com.ridelink.ride.dto.AssignDriverRequest;
+import com.ridelink.ride.dto.CompleteRideRequest;
 import com.ridelink.ride.dto.CreateRideRequest;
+import com.ridelink.ride.dto.PaymentResponse;
+import com.ridelink.ride.dto.PaymentRideRequest;
 import com.ridelink.ride.entity.Ride;
+import com.ridelink.ride.security.RideAccessService;
 import com.ridelink.ride.service.RideService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,9 +31,11 @@ import java.util.List;
 public class RideController {
 
     private final RideService rideService;
+    private final RideAccessService rideAccessService;
 
-    public RideController(RideService rideService) {
+    public RideController(RideService rideService, RideAccessService rideAccessService) {
         this.rideService = rideService;
+        this.rideAccessService = rideAccessService;
     }
 
     // Create Ride
@@ -43,8 +50,10 @@ public class RideController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Ride createRide(
-            @Valid @RequestBody CreateRideRequest request) {
+            @Valid @RequestBody CreateRideRequest request,
+            Authentication authentication) {
 
+        rideAccessService.requirePassengerId(request.getPassengerId(), authentication);
         return rideService.createRide(request);
     }
 
@@ -58,9 +67,11 @@ public class RideController {
             @ApiResponse(responseCode = "404", description = "Ride not found")
     })
     @GetMapping("/{id}")
-    public Ride getRide(@PathVariable Long id) {
+    public Ride getRide(@PathVariable Long id, Authentication authentication) {
 
-        return rideService.getRide(id);
+        Ride ride = rideService.getRide(id);
+        rideAccessService.requireRideOwnerOrAdmin(ride, authentication);
+        return ride;
     }
 
     // Get Passenger Rides
@@ -74,8 +85,9 @@ public class RideController {
     )
     @GetMapping
     public List<Ride> getPassengerRides(
-            @RequestParam Long passengerId) {
+            @RequestParam Long passengerId, Authentication authentication) {
 
+        rideAccessService.requirePassengerOrAdmin(passengerId, authentication);
         return rideService.getPassengerRides(passengerId);
     }
 
@@ -92,8 +104,10 @@ public class RideController {
     @PatchMapping("/{id}/assign")
     public Ride assignDriver(
             @PathVariable Long id,
-            @Valid @RequestBody AssignDriverRequest request) {
+            @Valid @RequestBody AssignDriverRequest request,
+            Authentication authentication) {
 
+        rideAccessService.requireRideOwnerOrAdmin(rideService.getRide(id), authentication);
         return rideService.assignDriver(id, request);
     }
 
@@ -108,8 +122,9 @@ public class RideController {
             @ApiResponse(responseCode = "404", description = "Ride not found")
     })
     @PatchMapping("/{id}/accept")
-    public Ride acceptRide(@PathVariable Long id) {
+    public Ride acceptRide(@PathVariable Long id, Authentication authentication) {
 
+        rideAccessService.requireAssignedDriverOrAdmin(rideService.getRide(id), authentication);
         return rideService.acceptRide(id);
     }
 
@@ -124,8 +139,9 @@ public class RideController {
             @ApiResponse(responseCode = "404", description = "Ride not found")
     })
     @PatchMapping("/{id}/start")
-    public Ride startRide(@PathVariable Long id) {
+    public Ride startRide(@PathVariable Long id, Authentication authentication) {
 
+        rideAccessService.requireAssignedDriverOrAdmin(rideService.getRide(id), authentication);
         return rideService.startRide(id);
     }
 
@@ -140,9 +156,21 @@ public class RideController {
             @ApiResponse(responseCode = "404", description = "Ride not found")
     })
     @PatchMapping("/{id}/complete")
-    public Ride completeRide(@PathVariable Long id) {
+    public Ride completeRide(@PathVariable Long id,
+                             @Valid @RequestBody CompleteRideRequest request,
+                             Authentication authentication) {
 
-        return rideService.completeRide(id);
+        rideAccessService.requireAssignedDriverOrAdmin(rideService.getRide(id), authentication);
+        return rideService.completeRide(id, request);
+    }
+
+    @PostMapping("/{id}/payment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PaymentResponse createPayment(@PathVariable Long id,
+                                         @RequestBody PaymentRideRequest request,
+                                         Authentication authentication) {
+        rideAccessService.requireRideOwner(rideService.getRide(id), authentication);
+        return rideService.createPayment(id, request);
     }
 
     // Cancel Ride
@@ -156,8 +184,9 @@ public class RideController {
             @ApiResponse(responseCode = "404", description = "Ride not found")
     })
     @PatchMapping("/{id}/cancel")
-    public Ride cancelRide(@PathVariable Long id) {
+    public Ride cancelRide(@PathVariable Long id, Authentication authentication) {
 
+        rideAccessService.requireRideOwnerOrAdmin(rideService.getRide(id), authentication);
         return rideService.cancelRide(id);
     }
 }

@@ -1,17 +1,17 @@
 package com.ridelink.ride.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public class AssignDriverRequest {
 
-    @NotNull(message = "Driver ID is required")
-    private Long driverId;
+    @NotBlank(message = "Service area is required")
+    private String serviceArea;
 
-    public Long getDriverId() {
-        return driverId;
+    public String getServiceArea() {
+        return serviceArea;
     }
 
-    public void setDriverId(Long driverId) {
-        this.driverId = driverId;
+    public void setServiceArea(String serviceArea) {
+        this.serviceArea = serviceArea;
     }
 }

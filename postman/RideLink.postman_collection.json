@@ -1,0 +1,351 @@
+{
+  "info": {
+    "_postman_id": "427c59ed-b22e-47fc-9af0-de8b7fa9c285",
+    "name": "RideLink",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52537756",
+    "_collection_link": "https://go.postman.co/collection/52537756-427c59ed-b22e-47fc-9af0-de8b7fa9c285?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Driver & Vehicle Service",
+      "item": [
+        {
+          "name": "Create Driver",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountId\": 20,\r\n  \"licenseNumber\": \"B2026001\",\r\n  \"serviceArea\": \"Colombo\",\r\n  \"latitude\": 6.9271,\r\n  \"longitude\": 79.8612\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Driver",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers/{{driver_id}}",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers",
+                "{{driver_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Driver",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"serviceArea\": \"Dehiwala\",\r\n  \"operationalStatus\": \"ACTIVE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers/{{driver_id}}",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers",
+                "{{driver_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"registrationNumber\": \"CAA-5678\",\r\n  \"make\": \"Toyota\",\r\n  \"model\": \"Aqua\",\r\n  \"colour\": \"White\",\r\n  \"vehicleType\": \"CAR\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers/{{driver_id}}/vehicle",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers",
+                "{{driver_id}}",
+                "vehicle"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vehicle",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers/{{driver_id}}/vehicle",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers",
+                "{{driver_id}}",
+                "vehicle"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vehicle",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"registrationNumber\": \"CAA-5678\",\r\n  \"make\": \"Toyota\",\r\n  \"model\": \"Prius\",\r\n  \"colour\": \"Silver\",\r\n  \"vehicleType\": \"CAR\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers/{{driver_id}}/vehicle",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers",
+                "{{driver_id}}",
+                "vehicle"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Availability",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"availability\": \"AVAILABLE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers/{{driver_id}}/availability",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers",
+                "{{driver_id}}",
+                "availability"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Location",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/drivers/1/location",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "drivers",
+                "1",
+                "location"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Eligible Drivers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8082/api/drivers/available?serviceArea=Colombo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "drivers",
+                "available"
+              ],
+              "query": [
+                {
+                  "key": "serviceArea",
+                  "value": "Colombo"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Negative Tests",
+      "item": [
+        {
+          "name": "Invalid Driver ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers/999",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Duplicate Vehicle Registration",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"registrationNumber\": \"CAB-1234\",\r\n  \"make\": \"Honda\",\r\n  \"model\": \"Vezel\",\r\n  \"colour\": \"Black\",\r\n  \"vehicleType\": \"CAR\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers/2/vehicle",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers",
+                "2",
+                "vehicle"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "No Eligible Driver",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers/available?serviceArea=Kandy",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers",
+                "available"
+              ],
+              "query": [
+                {
+                  "key": "serviceArea",
+                  "value": "Kandy"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Driver Input",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountId\": -5,\r\n  \"licenseNumber\": \"\",\r\n  \"serviceArea\": \"\",\r\n  \"latitude\": 150,\r\n  \"longitude\": 200\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{driver_base_url}}/api/drivers",
+              "host": [
+                "{{driver_base_url}}"
+              ],
+              "path": [
+                "api",
+                "drivers"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
